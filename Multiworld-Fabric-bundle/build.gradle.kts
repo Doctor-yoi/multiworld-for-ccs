@@ -26,9 +26,6 @@ dependencies {
 	
 	// bundle jars
 	include(project(":Multiworld-Fabric-1.18.2"))
-	include(project(":Multiworld-Fabric-1.19.2"))
-	include(project(":Multiworld-Fabric-1.19.4"))
-	include(project(":Multiworld-Fabric-1.20"))
 }
 
 

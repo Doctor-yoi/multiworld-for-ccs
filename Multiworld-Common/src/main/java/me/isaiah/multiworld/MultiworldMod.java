@@ -43,7 +43,7 @@ public class MultiworldMod {
 
     public static final String MOD_ID = "multiworld";
     public static MinecraftServer mc;
-    public static String CMD = "mw";
+    public static String CMD = "mv";
     public static ICreator world_creator;
 
 	// Mod Version

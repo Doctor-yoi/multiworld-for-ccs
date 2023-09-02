@@ -24,43 +24,73 @@ import java.io.File;
 import me.isaiah.multiworld.config.*;
 
 public class CreateCommand {
-
-    public static int run(MinecraftServer mc, ServerPlayerEntity plr, String[] args) {
-        if (args.length == 1 || args.length == 2) {
-            plr.sendMessage(text_plain("Usage: /mv create <id> <env>"), false);
-            return 0;
-        }
-
-        Identifier dim = null;
-        Random r = new Random();
-        long seed = r.nextInt();
-
-        ChunkGenerator gen = null;
-        if (args[2].contains("NORMAL")) {
-            gen = mc.getWorld(World.OVERWORLD).getChunkManager().getChunkGenerator();
-            dim = Util.OVERWORLD_ID;
-        }
-
-        if (args[2].contains("NETHER")) {
-            gen = mc.getWorld(World.NETHER).getChunkManager().getChunkGenerator();
-            dim = Util.THE_NETHER_ID;
-        }
-        
-        if (args[2].contains("END")) {
-            gen = mc.getWorld(World.END).getChunkManager().getChunkGenerator();
-            dim = Util.THE_END_ID;
-        }
-        
-        String arg1 = args[1];
-        if (arg1.indexOf(':') == -1) arg1 = "multiworld:" + arg1;
-        
-        ServerWorld world = MultiworldMod.create_world(arg1, dim, gen, Difficulty.NORMAL, seed);
+	
+	public static int run(MinecraftServer mc, ServerPlayerEntity plr, String[] args) {
+		if (args.length == 1 || args.length == 2) {
+			plr.sendMessage(text_plain("Usage: /mv create <id> <env> <?seed> <?difficulty>"), false);
+			return 0;
+		}
+		
+		Identifier dim = null;
+		long seed;
+		if(args[3]!=null){
+			seed = Long.parseLong(args[3]);
+		}else{
+			Random r = new Random();
+			seed = r.nextInt();
+		}
+		
+		Difficulty dif = Difficulty.NORMAL;
+		if(args.length==4){
+			switch (args[4]){
+				case "normal":
+					dif = Difficulty.NORMAL;
+					break;
+				
+				case "easy":
+					dif = Difficulty.EASY;
+					break;
+				
+				case "hard":
+					dif = Difficulty.HARD;
+					break;
+				
+				case "peaceful":
+					dif = Difficulty.PEACEFUL;
+					break;
+				
+				default:
+					dif = Difficulty.NORMAL;
+			}
+		}
+		
+		
+		ChunkGenerator gen = null;
+		if (args[2].contains("NORMAL")) {
+			gen = mc.getWorld(World.OVERWORLD).getChunkManager().getChunkGenerator();
+			dim = Util.OVERWORLD_ID;
+		}
+		
+		if (args[2].contains("NETHER")) {
+			gen = mc.getWorld(World.NETHER).getChunkManager().getChunkGenerator();
+			dim = Util.THE_NETHER_ID;
+		}
+		
+		if (args[2].contains("END")) {
+			gen = mc.getWorld(World.END).getChunkManager().getChunkGenerator();
+			dim = Util.THE_END_ID;
+		}
+		
+		String arg1 = args[1];
+		if (arg1.indexOf(':') == -1) arg1 = "multiworld:" + arg1;
+		
+		ServerWorld world = MultiworldMod.create_world(arg1, dim, gen, dif, seed);
 		make_config(world, args[2], seed);
-
-        plr.sendMessage(text("Created world with id: " + args[1], Formatting.GREEN), false);
-        
-        return 1;
-    }
+		
+		plr.sendMessage(text("Created world with id: " + args[1], Formatting.GREEN), false);
+		
+		return 1;
+	}
 	
 	public static void reinit_world_from_config(MinecraftServer mc, String id) {
 		File config_dir = new File("config");
